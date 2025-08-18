@@ -61,6 +61,7 @@ export default function Login() {
                     onChangeText={setEmail}
                     keyboardType="email-address"
                     autoCapitalize="none"
+                    autoFocus={true}
                   />
                 </View>
               </View>
