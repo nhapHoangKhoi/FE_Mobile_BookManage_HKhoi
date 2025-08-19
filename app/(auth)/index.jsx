@@ -16,21 +16,20 @@ import styles from "../../assets/styles/login.styles";
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import COLORS from "../../constants/colors";
-
-// import { useAuthStore } from "../../store/authStore";
+import { useAuthStore } from "../../store/authStore";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  // const { isLoading, login, isCheckingAuth } = useAuthStore();
+  const { isLoading, login, isCheckingAuth } = useAuthStore();
 
   const handleLogin = async () => {
-    // const result = await login(email, password);
+    const result = await login(email, password);
 
-    // if(!result.success) { 
-    //   Alert.alert("Error", result.error) 
-    // };
+    if(!result.success) { 
+      Alert.alert("Error", result.error) 
+    };
   };
 
   // if (isCheckingAuth) return null;
@@ -114,12 +113,11 @@ export default function Login() {
                 onPress={handleLogin} 
                 // disabled={isLoading}
               >
-                {/* {isLoading ? (
+                {isLoading ? (
                   <ActivityIndicator color="#fff" />
                 ) : (
                   <Text style={styles.buttonText}>Login</Text>
-                )} */}
-                <Text style={styles.buttonText}>Login</Text>
+                )}
               </TouchableOpacity>
 
               <View style={styles.footer}>
