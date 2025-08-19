@@ -15,6 +15,7 @@ import { Ionicons } from "@expo/vector-icons";
 import COLORS from "../../constants/colors";
 import { useState } from "react";
 import { useRouter } from "expo-router";
+import { useAuthStore } from "../../store/authStore";
 
 export default function Signup() {
   const [username, setUsername] = useState("");
@@ -22,9 +23,18 @@ export default function Signup() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
+  // const { user, isLoading, register, token } = useAuthStore();
+  const { user, isLoading, register } = useAuthStore();
+
   const router = useRouter();
 
   const handleSignUp = async () => {
+    const result = await register(username, email, password);
+    console.log(result);
+
+    if(!result.success) { 
+      Alert.alert("Error", result.error);
+    }
   };
 
   return (
@@ -32,7 +42,13 @@ export default function Signup() {
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <TouchableWithoutFeedback   
+        onPress={(e) => {
+          if(e.target.tagName !== "INPUT" && e.target.tagName !== "TEXTAREA") {
+            Keyboard.dismiss();
+          }
+        }}
+      >
         <View style={styles.container}>
           <View style={styles.card}>
             <View style={styles.header}>
@@ -115,8 +131,13 @@ export default function Signup() {
               <TouchableOpacity 
                 style={styles.button} 
                 onPress={handleSignUp} 
+                // disabled={isLoading}
               >
-                <Text style={styles.buttonText}>Sign Up</Text>
+                {isLoading ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <Text style={styles.buttonText}>Sign Up</Text>
+                )}
               </TouchableOpacity>
 
               <View style={styles.footer}>

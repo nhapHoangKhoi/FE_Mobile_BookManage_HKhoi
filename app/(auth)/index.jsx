@@ -23,16 +23,30 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  // const { isLoading, login, isCheckingAuth } = useAuthStore();
 
   const handleLogin = async () => {
+    // const result = await login(email, password);
+
+    // if(!result.success) { 
+    //   Alert.alert("Error", result.error) 
+    // };
   };
+
+  // if (isCheckingAuth) return null;
 
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <TouchableWithoutFeedback   
+        onPress={(e) => {
+          if(e.target.tagName !== "INPUT" && e.target.tagName !== "TEXTAREA") {
+            Keyboard.dismiss();
+          }
+        }}
+      >
         <View style={styles.container}>
           <View style={styles.topIllustration}>
             <Image
@@ -61,7 +75,6 @@ export default function Login() {
                     onChangeText={setEmail}
                     keyboardType="email-address"
                     autoCapitalize="none"
-                    autoFocus={true}
                   />
                 </View>
               </View>
@@ -99,7 +112,13 @@ export default function Login() {
               <TouchableOpacity 
                 style={styles.button} 
                 onPress={handleLogin} 
+                // disabled={isLoading}
               >
+                {/* {isLoading ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <Text style={styles.buttonText}>Login</Text>
+                )} */}
                 <Text style={styles.buttonText}>Login</Text>
               </TouchableOpacity>
 
