@@ -6,12 +6,12 @@ import { StatusBar } from "expo-status-bar";
 export default function RootLayout() {
   return (
     <SafeAreaProvider>
-      <SafeScreen>
+      {/* <SafeScreen> */}
         <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="index" options={{title: "Home page"}} />
-      <Stack.Screen name="(auth)" />
+          <Stack.Screen name="index" options={{title: "Home page"}} />
+          <Stack.Screen name="(auth)" />
         </Stack>
-      </SafeScreen>
+      {/* </SafeScreen> */}
       <StatusBar style="dark" />
     </SafeAreaProvider>
   );

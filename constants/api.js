@@ -1,6 +1,6 @@
 import { Platform } from "react-native";
 
-let API_URL = "";
+let API_URL = `${process.env.EXPO_PUBLIC_API_URL}` || "";
 
 if (__DEV__) {
   // development
@@ -14,8 +14,8 @@ if (__DEV__) {
   }
 } 
 else {
-  // production (deployed backend)
-  API_URL = "https://your-api.example.com/api";
+  // production
+  API_URL = `${process.env.EXPO_PUBLIC_API_URL}`; // deployed backend
 }
 
 export { API_URL };
