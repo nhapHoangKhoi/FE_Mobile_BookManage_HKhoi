@@ -16,7 +16,7 @@ export const useAuthStore = create((set) => ({
         email: email,
         password: password
       };
-      
+
       const response = await fetch(`${API_URL}/auth/register`, {
         method: "POST",
         headers: {
