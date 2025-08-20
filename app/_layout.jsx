@@ -28,20 +28,26 @@ export default function RootLayout() {
       isSignedIn = true;
     }
 
+    console.log(">>> isAuthRoute: ", isAuthRoute);
+    console.log(">>> isSignedIn: ", isSignedIn);
+
     if(!isSignedIn && !isAuthRoute) {
+      console.log("Chay vao day 1")
       router.replace("/(auth)");
     }
     else if(isSignedIn && isAuthRoute) {
+      console.log("Chay vao day 2")
       router.replace("/(tabs)");
     }
+    console.log("-----------------");
   }, [user, token, segments]);
 
   return (
     <SafeAreaProvider>
       <SafeScreen>
         <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="(tabs)" options={{title: "Page 1"}} />
           <Stack.Screen name="(auth)" />
+          <Stack.Screen name="(tabs)" options={{title: "Page 1"}} />
         </Stack>
       </SafeScreen>
       <StatusBar style="dark" />
