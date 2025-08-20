@@ -20,7 +20,7 @@ import { useAuthStore } from "../../store/authStore";
 import * as ImagePicker from "expo-image-picker";
 import { API_URL } from "../../constants/api";
 
-export default function Create() {
+export default function CreateBookPage() {
   const [title, setTitle] = useState("");
   const [caption, setCaption] = useState("");
   const [rating, setRating] = useState(3);
@@ -221,7 +221,7 @@ export default function Create() {
                     color={COLORS.white}
                     style={styles.buttonIcon}
                   />
-                  <Text style={styles.buttonText}>Share</Text>
+                  <Text style={styles.buttonText}>Publish</Text>
                 </>
               )}
             </TouchableOpacity>

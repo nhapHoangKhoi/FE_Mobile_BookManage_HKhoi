@@ -1,7 +1,6 @@
 import {
   View,
   Text,
-  TouchableOpacity,
   FlatList,
   ActivityIndicator,
   RefreshControl,
@@ -162,7 +161,7 @@ export default function Home() {
         keyExtractor={(item) => item._id}
         contentContainerStyle={styles.listContainer}
         showsVerticalScrollIndicator={false} // not show scrollbar
-        //-- reload page by pulling the page down
+        //-- reload page by pulling the list down
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -171,7 +170,7 @@ export default function Home() {
             tintColor={COLORS.primary}
           />
         }
-        //-- End reload page by pulling the page down
+        //-- End reload page by pulling the list down
 
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.1} // how far from the end to trigger (here is to call the api) 
