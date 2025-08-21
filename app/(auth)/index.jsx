@@ -32,7 +32,7 @@ export default function Login() {
     };
   };
 
-  // if (isCheckingAuth) return null;
+  if(isCheckingAuth) return null;
 
   return (
     <KeyboardAvoidingView
