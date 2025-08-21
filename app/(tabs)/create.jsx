@@ -18,6 +18,7 @@ import COLORS from "../../constants/colors";
 import { useAuthStore } from "../../store/authStore";
 
 import * as ImagePicker from "expo-image-picker";
+import * as DocumentPicker from "expo-document-picker";
 import { API_URL } from "../../constants/api";
 
 export default function CreateBookPage() {
@@ -27,6 +28,7 @@ export default function CreateBookPage() {
   const [loading, setLoading] = useState(false);
 
   const [image, setImage] = useState(null); // display the selected image
+  const [file, setFile] = useState(null);
 
   const router = useRouter();
   const { token } = useAuthStore();
@@ -85,8 +87,29 @@ export default function CreateBookPage() {
     }
   };
 
+  const chooseFile = async () => {
+    try {
+      // open file explorer
+      const result = await DocumentPicker.getDocumentAsync({
+        type: "application/pdf",
+        copyToCacheDirectory: true,
+      });
+
+      if(result.canceled) {
+        return;
+      }
+
+      const fileAsset = result.assets[0];
+      setFile(fileAsset);
+    } 
+    catch (error) {
+      console.error("Error picking PDF:", error);
+      Alert.alert("Error", "Could not pick file!");
+    }
+  };
+
   const handleSubmit = async () => {
-    if(!title || !caption || !image || !rating) {
+    if(!title || !caption || !image || !rating || !file) {
       Alert.alert("Error", "Please fill in all fields");
       return;
     }
@@ -110,6 +133,12 @@ export default function CreateBookPage() {
         type: imageType, // mime type
       });
 
+      formData.append("fileBook", {
+        uri: file.uri, // just different style of writing code, actually 100% the same
+        name: file.name,
+        type: "application/pdf",
+      });
+
       const response = await fetch(`${API_URL}/books`, {
         method: "POST",
         headers: {
@@ -128,6 +157,7 @@ export default function CreateBookPage() {
       setCaption("");
       setRating(3);
       setImage(null);
+      setFile(null);
       router.push("/");
     } 
     catch (error) {
@@ -148,7 +178,7 @@ export default function CreateBookPage() {
         <View style={styles.card}>
           <View style={styles.header}>
             <Text style={styles.title}>Add Book</Text>
-            <Text style={styles.subtitle}>Share your favorite reads with others</Text>
+            <Text style={styles.subtitle}>Upload your books</Text>
           </View>
 
           <View style={styles.form}>
@@ -204,6 +234,29 @@ export default function CreateBookPage() {
                 onChangeText={setCaption}
                 multiline
               />
+            </View>
+
+            {/* pdf */}
+            <View style={styles.formGroup}>
+              <Text style={styles.label}>PDF file</Text>
+              <TouchableOpacity 
+                style={styles.filePicker} 
+                onPress={chooseFile}
+              >
+                {file ? (
+                  <View style={styles.fileInfo}>
+                    <Ionicons name="document-text-outline" size={28} color={COLORS.primary} />
+                    <Text style={styles.fileName} numberOfLines={1}>
+                      {file.name}
+                    </Text>
+                  </View>
+                ) : (
+                  <View style={styles.placeholderContainer}>
+                    <Ionicons name="document-outline" size={40} color={COLORS.textSecondary} />
+                    <Text style={styles.placeholderText}>Tap to select a pdf file</Text>
+                  </View>
+                )}
+              </TouchableOpacity>
             </View>
 
             <TouchableOpacity 

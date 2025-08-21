@@ -114,6 +114,27 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary,
     marginTop: 8,
   },
+  filePicker: {
+    width: "100%",
+    height: 80,
+    backgroundColor: COLORS.inputBackground,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 12,
+  },
+  fileInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  fileName: {
+    flex: 1,
+    fontSize: 16,
+    color: COLORS.textPrimary,
+  },
   button: {
     backgroundColor: COLORS.primary,
     borderRadius: 12,
