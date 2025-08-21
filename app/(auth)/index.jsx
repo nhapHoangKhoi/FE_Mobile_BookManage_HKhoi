@@ -111,7 +111,7 @@ export default function Login() {
               <TouchableOpacity 
                 style={styles.button} 
                 onPress={handleLogin} 
-                // disabled={isLoading}
+                disabled={isLoading}
               >
                 {isLoading ? (
                   <ActivityIndicator color="#fff" />
