@@ -52,13 +52,52 @@ export default function ProfilePage() {
       Alert.alert("Error", "Failed to load profile data. Pull down to refresh.");
     } 
     finally { // always
-      setIsLoading(false);
+      setIsLoading(false); // use for spinner while deleting action
     }
   };
 
   useEffect(() => {
     fetchData();
   }, []);
+
+  const handleDeleteBook = async (bookId) => {
+    try {
+      setDeleteBookId(bookId);
+
+      const response = await fetch(`${API_URL}/books/${bookId}`, {
+        method: "DELETE",
+        headers: { 
+          Authorization: `Bearer ${token}` 
+        },
+      });
+      const data = await response.json();
+
+      if(!response.ok) { 
+        throw new Error(data.message || "Failed to delete book");
+      }
+
+      setBooks(books.filter((book) => book._id !== bookId));
+
+      Alert.alert("Success", "Delete record successfully!");
+    } 
+    catch (error) {
+      Alert.alert("Error", error.message || "Failed to delete recommendation");
+    } 
+    finally {
+      setDeleteBookId(null);
+    }
+  };
+
+  const confirmDelete = (bookId) => {
+    Alert.alert(
+      "Delete Book", 
+      "Are you sure you want to delete this record? This action cannot be undone.",
+      [
+        { text: "Cancel", style: "cancel" },
+        { text: "Delete", style: "destructive", onPress: () => handleDeleteBook(bookId) },
+      ]
+    );
+  };
 
   const renderBookItem = ({ item }) => (
     <View style={styles.bookItem}>
@@ -78,8 +117,13 @@ export default function ProfilePage() {
 
       <TouchableOpacity 
         style={styles.deleteButton} 
+        onPress={() => confirmDelete(item._id)}
       >
-        <Ionicons name="trash-outline" size={20} color={COLORS.primary} />
+        {deleteBookId === item._id ? (
+          <ActivityIndicator size="small" color={COLORS.primary} />
+        ) : (
+          <Ionicons name="trash-outline" size={20} color={COLORS.primary} />
+        )}
       </TouchableOpacity>
     </View>
   );
@@ -102,7 +146,7 @@ export default function ProfilePage() {
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    await sleep(500);
+    await sleep(500); // delay first then fetchData
     await fetchData();
     setRefreshing(false);
   };
