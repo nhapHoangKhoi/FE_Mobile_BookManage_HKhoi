@@ -27,7 +27,7 @@ export default function Home() {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
-  // call to api (integrate with lazy loading below)
+  // call to api (integrate with infinite scrolling technique below)
   const fetchBooks = async (pageNum = 1, refresh = false) => {
     try {
       if(refresh) {
@@ -91,13 +91,13 @@ export default function Home() {
     fetchBooks();
   }, []);
 
-  // --- fetchMoreBook with lazy loading
+  // --- fetchMoreBook with infinite scrolling technique
   const handleLoadMore = async () => {
     if(hasMore && !loading && !refreshing) {
       await fetchBooks(page + 1); // call to the api again
     }
   };
-  // --- End fetchMoreBook with lazy loading
+  // --- End fetchMoreBook with infinite scrolling technique
 
   const renderRatingStars = (rating) => {
     const stars = [];
