@@ -156,7 +156,6 @@ export default function ProfilePage() {
   return (
     <View style={styles.container}>
       <ProfileHeader />
-      <LogoutButton />
 
       <View style={styles.booksHeader}>
         <Text style={styles.booksTitle}>Your Published Books</Text>

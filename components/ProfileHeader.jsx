@@ -1,8 +1,11 @@
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { useAuthStore } from "../store/authStore";
 import { Image } from "expo-image";
 import styles from "../assets/styles/profile.styles";
 import { formatMemberSince } from "../lib/utils";
+import { Ionicons } from "@expo/vector-icons";
+import COLORS from "../constants/colors";
+import LogoutButton from "./LogoutButton";
 
 export default function ProfileHeader() {
   const { user } = useAuthStore();
@@ -22,6 +25,18 @@ export default function ProfileHeader() {
         <Text style={styles.memberSince}>
           Joined {formatMemberSince(user.createdAt)}
         </Text>
+      </View>
+
+      <View style={styles.groupButtonsProfile}>
+        <TouchableOpacity 
+          style={styles.editProfileButton} 
+          // onPress={...}
+        >
+          <Ionicons name="create-outline" size={18} color={COLORS.white} />
+          <Text style={styles.logoutText}>Edit</Text>
+        </TouchableOpacity>
+
+        <LogoutButton />
       </View>
     </View>
   );

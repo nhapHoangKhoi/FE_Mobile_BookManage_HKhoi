@@ -1,4 +1,3 @@
-// styles/profile.styles.js
 import { StyleSheet } from "react-native";
 import COLORS from "../../constants/colors";
 
@@ -54,14 +53,31 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: COLORS.textSecondary,
   },
+  groupButtonsProfile: {
+    gap: 14
+  },
+  editProfileButton: {
+    backgroundColor: COLORS.textSecondary,
+    borderRadius: 12,
+    padding: 5,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    // marginBottom: 24,
+    shadowColor: COLORS.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
   logoutButton: {
     backgroundColor: "#e80000ff",
     borderRadius: 12,
-    padding: 12,
+    padding: 5,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 24,
+    justifyContent: "flex-start",
+    // marginBottom: 24,
     shadowColor: COLORS.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -71,7 +87,8 @@ const styles = StyleSheet.create({
   logoutText: {
     color: COLORS.white,
     fontWeight: "600",
-    marginLeft: 8,
+    fontSize: 10,
+    marginLeft: 4,
   },
   booksHeader: {
     flexDirection: "row",

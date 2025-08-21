@@ -23,8 +23,7 @@ export default function Signup() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  // const { user, isLoading, register, token } = useAuthStore();
-  const { user, isLoading, register } = useAuthStore();
+  const { isLoading, register } = useAuthStore();
 
   const router = useRouter();
 
@@ -131,7 +130,7 @@ export default function Signup() {
               <TouchableOpacity 
                 style={styles.button} 
                 onPress={handleSignUp} 
-                // disabled={isLoading}
+                disabled={isLoading}
               >
                 {isLoading ? (
                   <ActivityIndicator color="#fff" />
