@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -11,7 +11,7 @@ import {
   Image,
   ActivityIndicator,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useSegments } from "expo-router";
 import styles from "../../../../assets/styles/create.styles";
 import { Ionicons } from "@expo/vector-icons";
 import COLORS from "../../../../constants/colors";
@@ -22,6 +22,7 @@ import * as DocumentPicker from "expo-document-picker";
 import { API_URL } from "../../../../constants/api";
 
 export default function CreateBookPage() {
+  const segments = useSegments();
   const [title, setTitle] = useState("");
   const [caption, setCaption] = useState("");
   const [rating, setRating] = useState(3);
@@ -31,7 +32,7 @@ export default function CreateBookPage() {
   const [file, setFile] = useState(null);
 
   const router = useRouter();
-  const { token } = useAuthStore();
+  const { token, checkAuth } = useAuthStore();
 
   const renderRatingPicker = () => {
     const stars = [];
@@ -168,6 +169,10 @@ export default function CreateBookPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    checkAuth();
+  }, [segments]); // used for simulating in remove token
 
   return (
     <KeyboardAvoidingView

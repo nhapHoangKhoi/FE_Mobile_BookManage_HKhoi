@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
   RefreshControl,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useSegments } from "expo-router";
 import { API_URL } from "../../../../constants/api";
 import { useAuthStore } from "../../../../store/authStore";
 import styles from "../../../../assets/styles/profile.styles";
@@ -20,12 +20,13 @@ import { sleep } from "../../../../lib/utils";
 import LoaderSpinner from "../../../../components/LoaderSpinner";
 
 export default function ProfilePage() {
+  const segments = useSegments();
   const [books, setBooks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [deleteBookId, setDeleteBookId] = useState(null);
 
-  const { token } = useAuthStore();
+  const { token, checkAuth } = useAuthStore();
 
   const router = useRouter();
 
@@ -150,8 +151,12 @@ export default function ProfilePage() {
     setRefreshing(false);
   };
 
-  if(isLoading && !refreshing) return <LoaderSpinner size="large" color="#ff0000" />;
+  useEffect(() => {
+    checkAuth();
+  }, [segments]); // used for simulating in remove token
 
+  if(isLoading && !refreshing) return <LoaderSpinner size="large" color="#ff0000" />;
+  
   return (
     <View style={styles.container}>
       <ProfileHeader />

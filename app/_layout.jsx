@@ -23,12 +23,14 @@ export default function RootLayout() {
   // }, [segments, isMounted]);
 
   const { checkAuth, token } = useAuthStore();
-  const segments = useSegments();
+  // const segments = useSegments(); // another way better for optimization
 
   useEffect(() => {
     // console.log("Chay vo day"); // used for simulating in remove token
     checkAuth();
-  }, [segments]);
+  }, [
+    // segments // another way better for optimization
+  ]);
   // console.log(">>> Chay o root"); // used for simulating in remove token
   // console.log(token); // used for simulating in remove token
   return (
