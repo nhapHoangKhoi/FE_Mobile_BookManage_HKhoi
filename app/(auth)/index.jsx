@@ -17,6 +17,7 @@ import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import COLORS from "../../constants/colors";
 import { useAuthStore } from "../../store/authStore";
+// import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -26,13 +27,15 @@ export default function Login() {
 
   const handleLogin = async () => {
     const result = await login(email, password);
-
+    // await AsyncStorage.removeItem("token"); // used for simulating in remove token
+    // await AsyncStorage.removeItem("user"); // used for simulating in remove token
+    // console.log("Async succ");            // used for simulating in remove token
     if(!result.success) { 
-      Alert.alert("Error", result.error) 
+      Alert.alert("Error", result.error);
     };
   };
 
-  if(isCheckingAuth) return null;
+  // if(isCheckingAuth) return null; // not render anything when in action checking authentication
 
   return (
     <KeyboardAvoidingView

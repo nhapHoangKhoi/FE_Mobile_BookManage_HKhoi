@@ -9,16 +9,15 @@ import {
   RefreshControl,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { API_URL } from "../../constants/api";
-import { useAuthStore } from "../../store/authStore";
-import styles from "../../assets/styles/profile.styles";
-import ProfileHeader from "../../components/ProfileHeader";
-import LogoutButton from "../../components/LogoutButton";
+import { API_URL } from "../../../../constants/api";
+import { useAuthStore } from "../../../../store/authStore";
+import styles from "../../../../assets/styles/profile.styles";
+import ProfileHeader from "../../../../components/ProfileHeader";
 import { Ionicons } from "@expo/vector-icons";
-import COLORS from "../../constants/colors";
+import COLORS from "../../../../constants/colors";
 import { Image } from "expo-image";
-import { sleep } from ".";
-import LoaderSpinner from "../../components/LoaderSpinner";
+import { sleep } from "../../../../lib/utils";
+import LoaderSpinner from "../../../../components/LoaderSpinner";
 
 export default function ProfilePage() {
   const [books, setBooks] = useState([]);
@@ -184,7 +183,9 @@ export default function ProfilePage() {
             <Text style={styles.emptyText}>No documents yet</Text>
             <TouchableOpacity 
               style={styles.addButton} 
-              onPress={() => router.push("/(tabs)/create")}
+              onPress={() => router.push("/admin/(tabs)/book-create/")} // index => '/'
+                                                                        // router(book-create/)
+                                                                        // router(book-create) also correct
             >
               <Text style={styles.addButtonText}>Publish Your First Book!</Text>
             </TouchableOpacity>

@@ -6,7 +6,7 @@ export const useAuthStore = create((set) => ({
   user: null,
   token: null,
   isLoading: false,
-  isCheckingAuth: true, // as soon as we start the application, we check the authentication
+  isCheckingAuth: true, // ARE we CHECKING the authenticaion? 
 
   register: async (username, email, password) => {
     set({ isLoading: true });
@@ -100,7 +100,7 @@ export const useAuthStore = create((set) => ({
       console.log("Auth check failed", error);
     } 
     finally { // always
-      set({ isCheckingAuth: false });
+      set({ isCheckingAuth: false }); // run down to this line, it means check finished
     }
   },
 

@@ -5,19 +5,18 @@ import {
   ActivityIndicator,
   RefreshControl,
 } from "react-native";
-import { useAuthStore } from "../../store/authStore";
+import { useAuthStore } from "../../../store/authStore";
 
 import { Image } from "expo-image";
 import { useEffect, useState } from "react";
 
-import styles from "../../assets/styles/home.styles";
-import { API_URL } from "../../constants/api";
+import styles from "../../../assets/styles/home.styles";
+import { API_URL } from "../../../constants/api";
 import { Ionicons } from "@expo/vector-icons";
-import { formatPublishDate } from "../../lib/utils";
-import COLORS from "../../constants/colors";
-import LoaderSpinner from "../../components/LoaderSpinner";
-
-export const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+import { formatPublishDate } from "../../../lib/utils";
+import COLORS from "../../../constants/colors";
+import LoaderSpinner from "../../../components/LoaderSpinner";
+import { sleep } from "../../../lib/utils";
 
 export default function Home() {
   const { token } = useAuthStore();
@@ -88,8 +87,10 @@ export default function Home() {
   };
 
   useEffect(() => {
-    fetchBooks();
-  }, []);
+    if(token) {
+      fetchBooks();
+    }
+  }, [token]);
 
   // --- fetchMoreBook with infinite scrolling technique
   const handleLoadMore = async () => {

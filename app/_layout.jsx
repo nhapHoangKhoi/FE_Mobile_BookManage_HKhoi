@@ -6,48 +6,42 @@ import { useAuthStore } from "../store/authStore";
 import { useEffect, useState } from "react";
 
 export default function RootLayout() {
-  const router = useRouter();
+  // const router = useRouter();
+  // const segments = useSegments();
+
+  // const [isMounted, setIsMounted] = useState(false);
+
+  // useEffect(() => {
+  //   setIsMounted(true); // mark as mounted after first render
+  // }, []);
+
+  // // handle navigation based on the authen state
+  // useEffect(() => {
+  //   if(!isMounted) { // prevent navigating before mount
+  //     return;
+  //   }
+  // }, [segments, isMounted]);
+
+  const { checkAuth, token } = useAuthStore();
   const segments = useSegments();
 
-  const { checkAuth, user, token } = useAuthStore();
-  const [isMounted, setIsMounted] = useState(false);
-
   useEffect(() => {
+    // console.log("Chay vo day"); // used for simulating in remove token
     checkAuth();
-    setIsMounted(true); // mark as mounted after first render
-  }, []);
-
-  // handle navigation based on the authen state
-  useEffect(() => {
-    if(!isMounted) { // prevent navigating before mount
-      return;
-    }
-
-    let isAuthRoute = false;
-    let isSignedIn = false;
-
-    if(segments.length > 0 && segments[0] === "(auth)") {
-      isAuthRoute = true;
-    }
-
-    if(user && token) {
-      isSignedIn = true;
-    }
-
-    if(!isSignedIn && !isAuthRoute) {
-      router.replace("/(auth)");
-    }
-    else if(isSignedIn && isAuthRoute) {
-      router.replace("/(tabs)");
-    }
-  }, [user, token, segments, isMounted]);
-
+  }, [segments]);
+  // console.log(">>> Chay o root"); // used for simulating in remove token
+  // console.log(token); // used for simulating in remove token
   return (
     <SafeAreaProvider>
       <SafeScreen>
         <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="(auth)" />
-          <Stack.Screen name="(tabs)" options={{title: "Page 1"}} />
+          <Stack.Protected guard={token}>
+            <Stack.Screen name="admin/(tabs)" options={{title: "Page 1"}} /> 
+          </Stack.Protected>
+
+          <Stack.Protected guard={!token}>
+            <Stack.Screen name="(auth)" />
+          </Stack.Protected>
         </Stack>
       </SafeScreen>
       <StatusBar style="dark" />

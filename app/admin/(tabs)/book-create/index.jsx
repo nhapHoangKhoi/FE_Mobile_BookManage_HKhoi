@@ -12,14 +12,14 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useRouter } from "expo-router";
-import styles from "../../assets/styles/create.styles";
+import styles from "../../../../assets/styles/create.styles";
 import { Ionicons } from "@expo/vector-icons";
-import COLORS from "../../constants/colors";
-import { useAuthStore } from "../../store/authStore";
+import COLORS from "../../../../constants/colors";
+import { useAuthStore } from "../../../../store/authStore";
 
 import * as ImagePicker from "expo-image-picker";
 import * as DocumentPicker from "expo-document-picker";
-import { API_URL } from "../../constants/api";
+import { API_URL } from "../../../../constants/api";
 
 export default function CreateBookPage() {
   const [title, setTitle] = useState("");
@@ -158,7 +158,7 @@ export default function CreateBookPage() {
       setRating(3);
       setImage(null);
       setFile(null);
-      router.push("/");
+      router.push("/admin/(tabs)/");
     } 
     catch (error) {
       console.error("Error creating post:", error);
