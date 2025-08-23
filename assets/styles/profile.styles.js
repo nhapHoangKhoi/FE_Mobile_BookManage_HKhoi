@@ -54,7 +54,12 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary,
   },
   groupButtonsProfile: {
+    justifyContent: "center",
     gap: 14
+  },
+  groupButtonsEditDelete: {
+    justifyContent: "center",
+    gap: 10
   },
   editProfileButton: {
     backgroundColor: COLORS.textSecondary,
@@ -171,6 +176,10 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary,
   },
   deleteButton: {
+    padding: 8,
+    justifyContent: "center",
+  },
+  editBookButton: {
     padding: 8,
     justifyContent: "center",
   },

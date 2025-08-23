@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
   RefreshControl,
 } from "react-native";
-import { useRouter, useSegments } from "expo-router";
+import { Link, useRouter, useSegments } from "expo-router";
 import { API_URL } from "../../../../constants/api";
 import { useAuthStore } from "../../../../store/authStore";
 import styles from "../../../../assets/styles/profile.styles";
@@ -115,16 +115,26 @@ export default function ProfilePage() {
         </Text>
       </View>
 
-      <TouchableOpacity 
-        style={styles.deleteButton} 
-        onPress={() => confirmDelete(item._id)}
-      >
-        {deleteBookId === item._id ? (
-          <ActivityIndicator size="small" color={COLORS.primary} />
-        ) : (
-          <Ionicons name="trash-outline" size={20} color={COLORS.primary} />
-        )}
-      </TouchableOpacity>
+      <View style={styles.groupButtonsEditDelete}>
+        <Link href={`/admin/book-edit/${item._id}`} asChild>
+          <TouchableOpacity 
+            style={styles.editBookButton} 
+          >
+            <Ionicons name="create-outline" size={20} color={COLORS.primary} />
+          </TouchableOpacity>
+        </Link>
+
+        <TouchableOpacity 
+          style={styles.deleteButton} 
+          onPress={() => confirmDelete(item._id)}
+        >
+          {deleteBookId === item._id ? (
+            <ActivityIndicator size="small" color={COLORS.primary} />
+          ) : (
+            <Ionicons name="trash-outline" size={20} color={"#e80000ff"} />
+          )}
+        </TouchableOpacity>
+      </View>
     </View>
   );
 

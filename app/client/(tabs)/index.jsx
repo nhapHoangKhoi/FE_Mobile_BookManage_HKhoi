@@ -17,7 +17,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { formatPublishDate } from "../../../lib/utils";
 import COLORS from "../../../constants/colors";
 import LoaderSpinner from "../../../components/LoaderSpinner";
-import LogoutButton from "../../../components/LogoutButton";
 import { sleep } from "../../../lib/utils";
 import { Link } from "expo-router";
 
