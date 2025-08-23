@@ -149,17 +149,13 @@ export default function Home() {
             <Text style={styles.bookTitle}>{item.title}</Text>
             {isCreator && (
               <Link href={`/admin/book-edit/${item._id}`} asChild>
-                <TouchableOpacity
-                  style={styles.editButton}
-                  // onPress={() => console.log("Edit book", item._id)}
-                >
+                <TouchableOpacity style={styles.editButton}>
                   <Ionicons name="create-outline" size={20} color={COLORS.white} />
                   <Text style={styles.editButtonText}>Edit</Text>
                 </TouchableOpacity>
               </Link>
             )}
           </View>
-          
           <View style={styles.ratingContainer}>
             {renderRatingStars(item.rating)}
           </View>
