@@ -10,8 +10,9 @@ import {
   Alert,
   Image,
   ActivityIndicator,
+  RefreshControl,
 } from "react-native";
-import { useRouter, useSegments } from "expo-router";
+import { useSegments } from "expo-router";
 import styles from "../../../assets/styles/create.styles";
 import { Ionicons } from "@expo/vector-icons";
 import COLORS from "../../../constants/colors";
@@ -21,21 +22,67 @@ import * as ImagePicker from "expo-image-picker";
 import * as DocumentPicker from "expo-document-picker";
 import { API_URL } from "../../../constants/api";
 import { useLocalSearchParams, } from "expo-router";
+import { sleep } from "../../../lib/utils";
 
-export default function BookDetailPage() {
+export default function EditBookPage() {
   const { id } = useLocalSearchParams();
-
   const segments = useSegments();
+  const [bookDetail, setBookDetail] = useState();
   const [title, setTitle] = useState("");
   const [caption, setCaption] = useState("");
   const [rating, setRating] = useState(3);
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const [image, setImage] = useState(null); // display the selected image
   const [file, setFile] = useState(null);
 
-  const router = useRouter();
   const { token, checkAuth } = useAuthStore();
+
+  const fetchBookDetail = async () => {
+    try {
+      const response = await fetch(`${API_URL}/books/${id}`, {
+        headers: { 
+          Authorization: `Bearer ${token}` 
+        },
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to fetch detailed book!");
+      }
+
+      setBookDetail(data.bookDetail);
+    } 
+    catch (err) {
+      console.error("Error fetching book:", err);
+    } 
+    finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBookDetail();
+  }, []);
+
+  useEffect(() => {
+    if(bookDetail) {
+      setTitle(bookDetail.title || "");
+      setCaption(bookDetail.caption || "");
+      setRating(bookDetail.rating || 3);
+      setImage(bookDetail.image || null);
+      
+      if(bookDetail.fileBook) {
+        const fileName = bookDetail.fileBook.split("/").pop();
+        setFile({
+          uri: bookDetail.fileBook,
+          name: fileName,
+          type: "application/pdf",
+        });
+      }
+    }
+  }, [bookDetail]);
 
   const renderRatingPicker = () => {
     const stars = [];
@@ -121,30 +168,33 @@ export default function BookDetailPage() {
     try {
       setLoading(true);
 
-      const uriParts = image.split(".");
-      const fileType = uriParts[uriParts.length - 1];
-      const imageType = fileType ? `image/${fileType.toLowerCase()}` : "image/jpeg";
-
       // FormData
       const formData = new FormData();
       formData.append("title", title);
       formData.append("caption", caption);
       formData.append("rating", rating.toString());
 
-      formData.append("image", {
-        uri: image, // file path from expo-image-picker
-        name: `upload.${fileType}`, // any name
-        type: imageType, // mime type
-      });
+      if(image && !image.startsWith("https://res.cloudinary.com/")) {
+        const uriParts = image.split(".");
+        const fileType = uriParts[uriParts.length - 1];
+        const imageType = fileType ? `image/${fileType.toLowerCase()}` : "image/jpeg";
+        formData.append("image", {
+          uri: image, // file path from expo-image-picker
+          name: `upload.${fileType}`, // any name
+          type: imageType, // mime type
+        });
+      }
 
-      formData.append("fileBook", {
-        uri: file.uri, // just different style of writing code, actually 100% the same
-        name: file.name,
-        type: "application/pdf",
-      });
+      if(file && !file.uri.startsWith("https://res.cloudinary.com/")) {
+        formData.append("fileBook", {
+          uri: file.uri, // just different style of writing code, actually 100% the same
+          name: file.name,
+          type: "application/pdf",
+        });
+      }
 
-      const response = await fetch(`${API_URL}/books`, {
-        method: "POST",
+      const response = await fetch(`${API_URL}/books/${id}`, {
+        method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`
         },
@@ -156,13 +206,21 @@ export default function BookDetailPage() {
         throw new Error(data.message || "Something went wrong");
       }
 
-      Alert.alert("Success", "Your book has been posted!");
-      setTitle("");
-      setCaption("");
-      setRating(3);
-      setImage(null);
-      setFile(null);
-      router.push("/admin/(tabs)/");
+      Alert.alert("Success", "Book updated successfully!", [
+        {
+          text: "OK",
+          onPress: async () => {
+            // clear temporarily to show reload feeling
+            setTitle("");
+            setCaption("");
+            setImage(null);
+            setRating(null);
+            setFile(null);
+
+            await fetchBookDetail(); // after alert, automatically reload to get new info
+          },
+        },
+      ]);
     } 
     catch (error) {
       console.error("Error creating post:", error);
@@ -171,6 +229,13 @@ export default function BookDetailPage() {
     finally {
       setLoading(false);
     }
+  };
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await sleep(500); // delay first then fetchData
+    await fetchBookDetail();
+    setRefreshing(false);
   };
 
   useEffect(() => {
@@ -182,10 +247,22 @@ export default function BookDetailPage() {
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <ScrollView contentContainerStyle={styles.container} style={styles.scrollViewStyle}>
+      <ScrollView 
+        contentContainerStyle={styles.container} 
+        style={styles.scrollViewStyle}
+        //-- reload page by pulling the list down
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            colors={[COLORS.primary]}
+            tintColor={COLORS.primary}
+          />
+        }
+        //-- End reload page by pulling the list down
+      >
         <View style={styles.card}>
           <View style={styles.header}>
-            <Text>Book Edit detail: {id}</Text>
             <Text style={styles.title}>Edit Book</Text>
             <Text style={styles.subtitle}>Update your books</Text>
           </View>

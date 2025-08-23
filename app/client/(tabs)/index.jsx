@@ -116,18 +116,6 @@ export default function Home() {
     <Link href={`/client/book-detail/${item._id}`} asChild>
       <TouchableOpacity>
         <View style={styles.bookCard}>
-          <View style={styles.bookHeader}>
-            <View style={styles.userInfo}>
-              <Image 
-                source={{ uri: item.user.profileImage }} 
-                style={styles.avatar} 
-              />
-              <Text style={styles.username}>
-                {item.user.username}
-              </Text>
-            </View>
-          </View>
-
           <View style={styles.bookImageContainer}>
             <Image 
               source={item.image}

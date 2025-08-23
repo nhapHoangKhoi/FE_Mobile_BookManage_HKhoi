@@ -10,6 +10,7 @@ import {
   Alert,
   Image,
   ActivityIndicator,
+  RefreshControl,
 } from "react-native";
 import { useRouter, useSegments } from "expo-router";
 import styles from "../../../../assets/styles/create.styles";
@@ -20,6 +21,7 @@ import { useAuthStore } from "../../../../store/authStore";
 import * as ImagePicker from "expo-image-picker";
 import * as DocumentPicker from "expo-document-picker";
 import { API_URL } from "../../../../constants/api";
+import { sleep } from "../../../../lib/utils";
 
 export default function CreateBookPage() {
   const segments = useSegments();
@@ -27,6 +29,7 @@ export default function CreateBookPage() {
   const [caption, setCaption] = useState("");
   const [rating, setRating] = useState(3);
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const [image, setImage] = useState(null); // display the selected image
   const [file, setFile] = useState(null);
@@ -170,6 +173,18 @@ export default function CreateBookPage() {
     }
   };
 
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await sleep(500); // delay first then fetchData
+    setTitle("");
+    setCaption("");
+    setRating(3);
+    // force clear image/file properly instead of using setImage(null)
+    setImage(undefined);
+    setFile(undefined);
+    setRefreshing(false);
+  };
+
   useEffect(() => {
     checkAuth();
   }, [segments]); // used for simulating in remove token
@@ -179,7 +194,20 @@ export default function CreateBookPage() {
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <ScrollView contentContainerStyle={styles.container} style={styles.scrollViewStyle}>
+      <ScrollView 
+        contentContainerStyle={styles.container} 
+        style={styles.scrollViewStyle}
+        //-- reload page by pulling the list down
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            colors={[COLORS.primary]}
+            tintColor={COLORS.primary}
+          />
+        }
+        //-- End reload page by pulling the list down
+      >
         <View style={styles.card}>
           <View style={styles.header}>
             <Text style={styles.title}>Add Book</Text>
