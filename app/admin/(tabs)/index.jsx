@@ -4,6 +4,7 @@ import {
   FlatList,
   ActivityIndicator,
   RefreshControl,
+  TouchableOpacity,
 } from "react-native";
 import { useAuthStore } from "../../../store/authStore";
 
@@ -17,9 +18,10 @@ import { formatPublishDate } from "../../../lib/utils";
 import COLORS from "../../../constants/colors";
 import LoaderSpinner from "../../../components/LoaderSpinner";
 import { sleep } from "../../../lib/utils";
+import { Link } from "expo-router";
 
 export default function Home() {
-  const { token } = useAuthStore();
+  const { token, user } = useAuthStore();
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -117,40 +119,58 @@ export default function Home() {
   };
 
   // destructure syntax { item }
-  const renderItem = ({ item }) => (
-    <View style={styles.bookCard}>
-      <View style={styles.bookHeader}>
-        <View style={styles.userInfo}>
+  const renderItem = ({ item }) => {
+    const isCreator = item.user._id === user.id;
+
+    return (
+      <View style={styles.bookCard}>
+        <View style={styles.bookHeader}>
+          <View style={styles.userInfo}>
+            <Image 
+              source={{ uri: item.user.profileImage }} 
+              style={styles.avatar} 
+            />
+            <Text style={styles.username}>
+              {item.user.username}
+            </Text>
+          </View>
+        </View>
+
+        <View style={styles.bookImageContainer}>
           <Image 
-            source={{ uri: item.user.profileImage }} 
-            style={styles.avatar} 
+            source={item.image}
+            style={styles.bookImage} 
+            contentFit="cover" 
           />
-          <Text style={styles.username}>
-            {item.user.username}
+        </View>
+
+        <View style={styles.bookDetails}>
+          <View style={styles.titleRow}>
+            <Text style={styles.bookTitle}>{item.title}</Text>
+            {isCreator && (
+              <Link href={`/admin/book-edit/${item._id}`} asChild>
+                <TouchableOpacity
+                  style={styles.editButton}
+                  // onPress={() => console.log("Edit book", item._id)}
+                >
+                  <Ionicons name="create-outline" size={20} color={COLORS.white} />
+                  <Text style={styles.editButtonText}>Edit</Text>
+                </TouchableOpacity>
+              </Link>
+            )}
+          </View>
+          
+          <View style={styles.ratingContainer}>
+            {renderRatingStars(item.rating)}
+          </View>
+          <Text style={styles.caption}>{item.caption}</Text>
+          <Text style={styles.date}>
+            Published on {formatPublishDate(item.createdAt)}
           </Text>
         </View>
       </View>
-
-      <View style={styles.bookImageContainer}>
-        <Image 
-          source={item.image}
-          style={styles.bookImage} 
-          contentFit="cover" 
-        />
-      </View>
-
-      <View style={styles.bookDetails}>
-        <Text style={styles.bookTitle}>{item.title}</Text>
-        <View style={styles.ratingContainer}>
-          {renderRatingStars(item.rating)}
-        </View>
-        <Text style={styles.caption}>{item.caption}</Text>
-        <Text style={styles.date}>
-          Published on {formatPublishDate(item.createdAt)}
-        </Text>
-      </View>
-    </View>
-  );
+    );
+  };
 
   if(loading) return <LoaderSpinner size="large" color="#ff0000" />;
 

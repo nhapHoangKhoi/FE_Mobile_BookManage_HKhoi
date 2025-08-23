@@ -82,6 +82,31 @@ const styles = StyleSheet.create({
   bookDetails: {
     padding: 4,
   },
+  titleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  editButton: {
+    backgroundColor: COLORS.textSecondary,
+    borderRadius: 12,
+    padding: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    // marginBottom: 24,
+    shadowColor: COLORS.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  editButtonText: {
+    color: COLORS.white,
+    fontWeight: "600",
+    fontSize: 10,
+    marginLeft: 4,
+  },
   bookTitle: {
     fontSize: 18,
     fontWeight: "700",
