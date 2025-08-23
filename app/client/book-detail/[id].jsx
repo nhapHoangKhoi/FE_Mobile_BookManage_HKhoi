@@ -43,6 +43,39 @@ export default function BookDetailPage() {
     fetchBook();
   }, [id]);
 
+  useEffect(() => {
+    checkAuthClient();
+  }, [segments]); // used for simulating in remove token
+
+  useEffect(() => {
+    const checkIfBookIsSaved = async () => {
+      if(!userClient || !tokenClient) {
+        return;
+      }
+       
+      try {
+        const response = await fetch(`${API_URL}/client/favorites/${id}/${userClient.id}`, {
+          headers: { 
+            Authorization: `Bearer ${tokenClient}` 
+          },
+        });
+        const data = await response.json();
+
+        if(!response.ok) { 
+          throw new Error(data.message || "Failed to fetch favorite books!");
+        }
+
+        const isBookSaved = data.favoriteBooks.some((fav) => fav.bookId === id);
+        setIsSaved(isBookSaved);
+      } 
+      catch (error) {
+        console.error("Error checking if book is saved:", error);
+      }
+    };
+
+    checkIfBookIsSaved();
+  }, [id, userClient, tokenClient]);
+
   const handleToggleSave = async () => {
     if(!userClient || !tokenClient) {
       Alert.alert("Login required", "You need to login to use this feature!");
@@ -85,17 +118,13 @@ export default function BookDetailPage() {
       }
     } 
     catch(error) {
-      console.error("Error toggling recipe save:", error);
+      console.error("Error toggling book save:", error);
       Alert.alert("Error", `Something went wrong. Please try again.`);
     } 
     finally {
       setIsSaving(false);
     }
   };
-
-  useEffect(() => {
-    checkAuthClient();
-  }, [segments]); // used for simulating in remove token
 
   if (loading) {
     return (
@@ -124,11 +153,15 @@ export default function BookDetailPage() {
             onPress={handleToggleSave}
             disabled={isSaving}
           >
-            <Ionicons
-              name={isSaving ? "hourglass" : isSaved ? "bookmark" : "bookmark-outline"}
-              size={38}
-              color={"#f4b400"}
-            />
+            {isSaving ? (
+              <ActivityIndicator size="small" color={"#f4b400"} />
+            ) : (
+              <Ionicons
+                name={isSaved ? "bookmark" : "bookmark-outline"}
+                size={38}
+                color={"#f4b400"}
+              />
+            )}
           </TouchableOpacity>
         </View>
 
