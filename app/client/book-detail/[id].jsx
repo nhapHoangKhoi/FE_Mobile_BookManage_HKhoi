@@ -86,10 +86,17 @@ export default function BookDetailPage() {
     try {
       if(isSaved) {
         // remove from favorites
-        // const response = await fetch(`${API_URL}/favorites/${userId}/${recipeId}`, {
-        //   method: "DELETE",
-        // });
-        // if (!response.ok) throw new Error("Failed to remove recipe");
+        const response = await fetch(`${API_URL}/client/favorites/${id}/${userClient.id}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${tokenClient}`
+          },
+        });
+        const data = await response.json();
+
+        if(!response.ok) { 
+          throw new Error(data.message || "Failed to remove books from favorites!");
+        }
 
         setIsSaved(false);
       } 
