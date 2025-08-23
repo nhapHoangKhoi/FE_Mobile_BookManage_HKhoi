@@ -4,6 +4,7 @@ import {
   FlatList,
   ActivityIndicator,
   RefreshControl,
+  TouchableOpacity,
 } from "react-native";
 import { useAuthStore } from "../../../store/authStore";
 
@@ -18,6 +19,7 @@ import COLORS from "../../../constants/colors";
 import LoaderSpinner from "../../../components/LoaderSpinner";
 import LogoutButton from "../../../components/LogoutButton";
 import { sleep } from "../../../lib/utils";
+import { Link } from "expo-router";
 
 export default function Home() {
   const [books, setBooks] = useState([]);
@@ -112,38 +114,42 @@ export default function Home() {
 
   // destructure syntax { item }
   const renderItem = ({ item }) => (
-    <View style={styles.bookCard}>
-      <View style={styles.bookHeader}>
-        <View style={styles.userInfo}>
-          <Image 
-            source={{ uri: item.user.profileImage }} 
-            style={styles.avatar} 
-          />
-          <Text style={styles.username}>
-            {item.user.username}
-          </Text>
-        </View>
-      </View>
+    <Link href={`/client/book-detail/${item._id}`} asChild>
+      <TouchableOpacity>
+        <View style={styles.bookCard}>
+          <View style={styles.bookHeader}>
+            <View style={styles.userInfo}>
+              <Image 
+                source={{ uri: item.user.profileImage }} 
+                style={styles.avatar} 
+              />
+              <Text style={styles.username}>
+                {item.user.username}
+              </Text>
+            </View>
+          </View>
 
-      <View style={styles.bookImageContainer}>
-        <Image 
-          source={item.image}
-          style={styles.bookImage} 
-          contentFit="cover" 
-        />
-      </View>
+          <View style={styles.bookImageContainer}>
+            <Image 
+              source={item.image}
+              style={styles.bookImage} 
+              contentFit="cover" 
+            />
+          </View>
 
-      <View style={styles.bookDetails}>
-        <Text style={styles.bookTitle}>{item.title}</Text>
-        <View style={styles.ratingContainer}>
-          {renderRatingStars(item.rating)}
+          <View style={styles.bookDetails}>
+            <Text style={styles.bookTitle}>{item.title}</Text>
+            <View style={styles.ratingContainer}>
+              {renderRatingStars(item.rating)}
+            </View>
+            <Text style={styles.caption}>{item.caption}</Text>
+            <Text style={styles.date}>
+              Published on {formatPublishDate(item.createdAt)}
+            </Text>
+          </View>
         </View>
-        <Text style={styles.caption}>{item.caption}</Text>
-        <Text style={styles.date}>
-          Published on {formatPublishDate(item.createdAt)}
-        </Text>
-      </View>
-    </View>
+      </TouchableOpacity>
+    </Link>
   );
 
   if(loading) return <LoaderSpinner size="large" color="#ff0000" />;
