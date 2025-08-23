@@ -50,10 +50,13 @@ export default function Login() {
         }}
       >
         <View style={styles.container}>
-          <View style={styles.header}>
-            <Text style={styles.titleAdmin}>BookStore</Text>
-            <Text style={styles.subtitleAdmin}>Admin</Text>
-          </View>
+          {/* <View style={styles.topIllustration}>
+            <Image
+              source={require("../../assets/images/intro.png")}
+              style={styles.illustrationImage}
+              resizeMode="contain"
+            />
+          </View> */}
 
           <View style={styles.card}>
             <View style={styles.formContainer}>
@@ -122,9 +125,18 @@ export default function Login() {
 
               <View style={styles.footer}>
                 <Text style={styles.footerText}>Don't have an account?</Text>
-                <Link href="/signup" asChild>
+                <Link href="/signup-client" asChild>
                   <TouchableOpacity>
                     <Text style={styles.link}>Sign Up</Text>
+                  </TouchableOpacity>
+                </Link>
+              </View>
+
+              <View style={styles.footer}>
+                <Text style={styles.footerText}>Login as admin?</Text>
+                <Link href="/" asChild>
+                  <TouchableOpacity>
+                    <Text style={styles.linkAdmin}>Login admin</Text>
                   </TouchableOpacity>
                 </Link>
               </View>

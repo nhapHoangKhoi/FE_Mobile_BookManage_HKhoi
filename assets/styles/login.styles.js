@@ -51,6 +51,22 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary,
     textAlign: "center",
   },
+  headerAdmin: {
+    alignItems: "center",
+    marginBottom: 24,
+  },
+  titleAdmin: {
+    fontSize: 32,
+    fontWeight: "700",
+    color: COLORS.primary,
+    marginBottom: 8,
+  },
+  subtitleAdmin: {
+    fontSize: 20,
+    color: "#e80000ff",
+    textAlign: "center",
+    marginBottom: 8,
+  },
   formContainer: {
     marginBottom: 16,
   },
@@ -112,6 +128,10 @@ const styles = StyleSheet.create({
   },
   link: {
     color: COLORS.primary,
+    fontWeight: "600",
+  },
+  linkAdmin: {
+    color: "#e80000ff",
     fontWeight: "600",
   },
 });

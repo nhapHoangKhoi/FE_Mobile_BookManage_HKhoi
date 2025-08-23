@@ -37,6 +37,11 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary,
     textAlign: "center",
   },
+  subtitleAdmin: {
+    fontSize: 20,
+    color: "#e80000ff",
+    textAlign: "center",
+  },
   formContainer: { marginBottom: 16 },
   inputGroup: { marginBottom: 20 },
   label: {

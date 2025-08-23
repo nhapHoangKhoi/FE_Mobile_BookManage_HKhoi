@@ -51,7 +51,7 @@ export default function Signup() {
           <View style={styles.card}>
             <View style={styles.header}>
               <Text style={styles.title}>BookStore</Text>
-              <Text style={styles.subtitle}>Share your favorite reads</Text>
+              <Text style={styles.subtitleAdmin}>Admin</Text>
             </View>
 
             <View style={styles.formContainer}>
@@ -140,7 +140,7 @@ export default function Signup() {
 
               <View style={styles.footer}>
                 <Text style={styles.footerText}>Already have an account?</Text>
-                <TouchableOpacity onPress={() => router.push("/(auth)/index.jsx")}>
+                <TouchableOpacity onPress={() => router.push("/")}>
                   <Text style={styles.link}>Login</Text>
                 </TouchableOpacity>
               </View>
