@@ -42,6 +42,7 @@ export default function RootLayout() {
           </Stack.Protected>
 
           <Stack.Protected guard={!token}>
+            <Stack.Screen name="client/(tabs)" /> 
             <Stack.Screen name="(auth)" />
           </Stack.Protected>
         </Stack>

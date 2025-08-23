@@ -17,11 +17,9 @@ import { formatPublishDate } from "../../../lib/utils";
 import COLORS from "../../../constants/colors";
 import LoaderSpinner from "../../../components/LoaderSpinner";
 import LogoutButton from "../../../components/LogoutButton";
-
-export const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+import { sleep } from "../../../lib/utils";
 
 export default function Home() {
-  const { token } = useAuthStore();
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -38,11 +36,7 @@ export default function Home() {
         setLoading(true);
       } 
 
-      const response = await fetch(`${API_URL}/books?page=${pageNum}&limit=2`, {
-        headers: { 
-          Authorization: `Bearer ${token}` 
-        },
-      });
+      const response = await fetch(`${API_URL}/client/books?page=${pageNum}&limit=2`);
       const data = await response.json();
 
       if(!response.ok) { 
@@ -89,10 +83,8 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if(token) {
-      fetchBooks();
-    }
-  }, [token]);
+    fetchBooks();
+  }, []);
 
   // --- fetchMoreBook with infinite scrolling technique
   const handleLoadMore = async () => {
