@@ -6,6 +6,7 @@ import { Ionicons } from "@expo/vector-icons";
 import COLORS from "../../../constants/colors";
 import { API_URL } from "../../../constants/api";
 import { formatPublishDate } from "../../../lib/utils";
+import WebView from "react-native-webview";
 
 export default function BookDetailPage() {
   const { id } = useLocalSearchParams(); // catch [id]
@@ -72,6 +73,26 @@ export default function BookDetailPage() {
           />
         ))}
       </View>
+
+      {book.fileBook && (
+        <View style={styles.pdfContainer}>
+          <Text style={styles.pdfTitle}>Read the Book</Text>
+          <WebView
+            source={{ uri: `https://docs.google.com/viewer?url=${encodeURIComponent(book.fileBook)}` }}
+            style={styles.webview}
+            startInLoadingState={true}
+            renderLoading={() => (
+              <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color={COLORS.primary} />
+              </View>
+            )}
+            onError={(syntheticEvent) => {
+              const { nativeEvent } = syntheticEvent;
+              console.error("WebView error:", nativeEvent);
+            }}
+          />
+        </View>
+      )}
     </ScrollView> 
   );
 }
@@ -105,5 +126,26 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginTop: 12,
+  },
+  pdfContainer: {
+    marginTop: 20,
+  },
+  pdfTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  webview: {
+    width: "100%",
+    height: 400,
+  },
+  loadingContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
