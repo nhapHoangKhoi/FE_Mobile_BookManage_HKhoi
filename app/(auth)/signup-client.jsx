@@ -23,16 +23,20 @@ export default function Signup() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const { isLoading, register } = useAuthStore();
+  const { isLoading, registerClient } = useAuthStore();
 
   const router = useRouter();
 
   const handleSignUp = async () => {
-    const result = await register(username, email, password);
+    const result = await registerClient(username, email, password);
     
     if(!result.success) { 
       Alert.alert("Error", result.error);
+      return;
     }
+
+    router.dismissAll(); // clears navigation history
+    router.replace("../client/(tabs)/client-profile/");
   };
 
   return (

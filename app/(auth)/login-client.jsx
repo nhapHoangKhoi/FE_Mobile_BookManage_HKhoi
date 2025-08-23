@@ -11,7 +11,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import styles from "../../assets/styles/login.styles";
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
@@ -23,16 +23,21 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const { isLoading, login, isCheckingAuth } = useAuthStore();
+  const { isLoading, loginClient, isCheckingAuth } = useAuthStore();
+  const router = useRouter();
 
   const handleLogin = async () => {
-    const result = await login(email, password);
-    // await AsyncStorage.removeItem("token"); // used for simulating in remove token
-    // await AsyncStorage.removeItem("user"); // used for simulating in remove token
+    const result = await loginClient(email, password);
+    // await AsyncStorage.removeItem("tokenClient"); // used for simulating in remove token
+    // await AsyncStorage.removeItem("userClient"); // used for simulating in remove token
     // console.log("Async succ");            // used for simulating in remove token
     if(!result.success) { 
       Alert.alert("Error", result.error);
+      return;
     };
+
+    router.dismissAll(); // clears navigation history
+    router.replace("../client/(tabs)/client-profile/");
   };
 
   // if(isCheckingAuth) return null; // not render anything when in action checking authentication
@@ -50,14 +55,6 @@ export default function Login() {
         }}
       >
         <View style={styles.container}>
-          {/* <View style={styles.topIllustration}>
-            <Image
-              source={require("../../assets/images/intro.png")}
-              style={styles.illustrationImage}
-              resizeMode="contain"
-            />
-          </View> */}
-
           <View style={styles.card}>
             <View style={styles.formContainer}>
               <View style={styles.inputGroup}>

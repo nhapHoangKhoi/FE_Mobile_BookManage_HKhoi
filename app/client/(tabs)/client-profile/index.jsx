@@ -18,15 +18,16 @@ import COLORS from "../../../../constants/colors";
 import { Image } from "expo-image";
 import { sleep } from "../../../../lib/utils";
 import LoaderSpinner from "../../../../components/LoaderSpinner";
+import LogoutClientButton from "../../../../components/LogoutClientButton";
 
 export default function ProfilePage() {
-  // const segments = useSegments();
+  const segments = useSegments();
   // const [books, setBooks] = useState([]);
   // const [isLoading, setIsLoading] = useState(true);
   // const [refreshing, setRefreshing] = useState(false);
   // const [deleteBookId, setDeleteBookId] = useState(null);
 
-  // const { token, checkAuth } = useAuthStore();
+  const { tokenClient, userClient, checkAuthClient } = useAuthStore();
 
   const router = useRouter();
 
@@ -151,67 +152,60 @@ export default function ProfilePage() {
   //   setRefreshing(false);
   // };
 
-  // useEffect(() => {
-  //   checkAuth();
-  // }, [segments]); // used for simulating in remove token
+  useEffect(() => {
+    checkAuthClient();
+  }, [segments]);
 
   // if(isLoading && !refreshing) return <LoaderSpinner size="large" color="#ff0000" />;
   
   return (
     <View style={styles.container}>
-      <View style={styles.profileHeader}>
-        <Image 
-          // source={{ uri: user.profileImage }} 
-          source={{ uri: "https://api.dicebear.com/7.x/avataaars/svg?seed=levana" }} 
-          style={styles.profileImage} 
-        />
+      {tokenClient ? (
+        <View style={styles.profileHeader}>
+          <Image 
+            source={{ uri: userClient.profileImage }} 
+            style={styles.profileImage} 
+          />
 
-        <View style={styles.profileInfo}>
-          <Text style={styles.username}>Le Van X</Text>
-          <Text style={styles.email}>levanx@gmail.com</Text>
+          <View style={styles.profileInfo}>
+            <Text style={styles.username}>{userClient.username}</Text>
+            <Text style={styles.email}>{userClient.email}</Text>
+          </View>
+
+          <View style={styles.groupButtonsProfile}>
+            <TouchableOpacity 
+              style={styles.editProfileButton} 
+              // onPress={...}
+            >
+              <Ionicons name="create-outline" size={18} color={COLORS.white} />
+              <Text style={styles.logoutText}>Edit</Text>
+            </TouchableOpacity>
+
+            <LogoutClientButton />
+          </View>
         </View>
-
-        <View style={styles.groupButtonsProfile}>
+      ) : (
+        <>
+          <View style={styles.profileHeader}>
+            <Ionicons 
+              name="person-circle-outline" 
+              size={80} color={"grey"} 
+              style={styles.profileImage} 
+            />
+            <View style={styles.profileInfo}>
+              <Text style={styles.username}>Username</Text>
+            </View>
+          </View>
+          
           <TouchableOpacity 
-            style={styles.editProfileButton} 
-            // onPress={...}
+            style={styles.loginClientButton} 
+            onPress={() => router.push("../../../(auth)/login-client")}
           >
-            <Ionicons name="create-outline" size={18} color={COLORS.white} />
-            <Text style={styles.logoutText}>Edit</Text>
+            <Text style={styles.loginClientText}>Login</Text>
           </TouchableOpacity>
+        </>
+      )}
 
-          {/* <LogoutButton /> */}
-        </View>
-      </View>
-
-      <View style={styles.profileHeader}>
-        <Ionicons 
-          name="person-circle-outline" 
-          size={80} color={"grey"} 
-          style={styles.profileImage} 
-        />
-
-        <View style={styles.profileInfo}>
-          <Text style={styles.username}>Username</Text>
-        </View>
-
-        {/* <View style={styles.groupButtonsProfile}>
-          <TouchableOpacity 
-            style={styles.editProfileButton} 
-            // onPress={...}
-          >
-            <Ionicons name="log-in-outline" size={18} color={COLORS.white} />
-            <Text style={styles.logoutText}>Login</Text>
-          </TouchableOpacity>
-        </View> */}
-      </View>
-
-      <TouchableOpacity 
-        style={styles.loginClientButton} 
-        onPress={() => router.push("../../../(auth)/login-client")}
-      >
-        <Text style={styles.loginClientText}>Login</Text>
-      </TouchableOpacity>
 
       {/* <View style={styles.booksHeader}>
         <Text style={styles.booksTitle}>Your Published Books</Text>

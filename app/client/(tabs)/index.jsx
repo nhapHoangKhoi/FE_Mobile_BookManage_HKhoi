@@ -150,7 +150,6 @@ export default function Home() {
 
   return (
     <View style={styles.container}>
-      <LogoutButton />
       <FlatList
         data={books}
         renderItem={renderItem}
