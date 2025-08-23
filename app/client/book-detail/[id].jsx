@@ -1,5 +1,5 @@
-import { View, Text, ActivityIndicator, ScrollView, StyleSheet, Dimensions, TouchableOpacity, Modal } from "react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { View, Text, ActivityIndicator, ScrollView, StyleSheet, Dimensions, TouchableOpacity, Modal, Alert } from "react-native";
+import { useLocalSearchParams, useRouter, useSegments } from "expo-router";
 import { useEffect, useState } from "react";
 import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
@@ -7,14 +7,19 @@ import WebView from "react-native-webview";
 import COLORS from "../../../constants/colors";
 import { API_URL } from "../../../constants/api";
 import { formatPublishDate } from "../../../lib/utils";
+import { useAuthStore } from "../../../store/authStore";
 
 export default function BookDetailPage() {
+  const segments = useSegments();
   const { id } = useLocalSearchParams();
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showPdf, setShowPdf] = useState(false);
   const [showFullScreenPdf, setShowFullScreenPdf] = useState(false);
   const [pdfError, setPdfError] = useState(null);
+  const [isSaved, setIsSaved] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const { userClient, tokenClient, checkAuthClient } = useAuthStore();
   const router = useRouter();
 
   const fetchBook = async () => {
@@ -38,6 +43,60 @@ export default function BookDetailPage() {
     fetchBook();
   }, [id]);
 
+  const handleToggleSave = async () => {
+    if(!userClient || !tokenClient) {
+      Alert.alert("Login required", "You need to login to use this feature!");
+      return;
+    }
+    setIsSaving(true);
+
+    try {
+      if(isSaved) {
+        // remove from favorites
+        // const response = await fetch(`${API_URL}/favorites/${userId}/${recipeId}`, {
+        //   method: "DELETE",
+        // });
+        // if (!response.ok) throw new Error("Failed to remove recipe");
+
+        setIsSaved(false);
+      } 
+      else {
+        // add to favorites
+        const dataSubmit = {
+          clientId: userClient.id,
+          bookId: id
+        };
+
+        const response = await fetch(`${API_URL}/client/favorites`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${tokenClient}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(dataSubmit)
+        });
+        const data = await response.json();
+
+        if(!response.ok) { 
+          throw new Error(data.message || "Failed to save this book as favorites!");
+        }
+
+        setIsSaved(true);
+      }
+    } 
+    catch(error) {
+      console.error("Error toggling recipe save:", error);
+      Alert.alert("Error", `Something went wrong. Please try again.`);
+    } 
+    finally {
+      setIsSaving(false);
+    }
+  };
+
+  useEffect(() => {
+    checkAuthClient();
+  }, [segments]); // used for simulating in remove token
+
   if (loading) {
     return (
       <View style={styles.centerContainer}>
@@ -58,7 +117,21 @@ export default function BookDetailPage() {
     <ScrollView style={styles.container}>
       <View style={styles.card}>
         <Image source={book.image} style={styles.image} contentFit="cover" />
-        <Text style={styles.title}>{book.title}</Text>
+
+        <View style={styles.titleRow}>
+          <Text style={styles.title}>{book.title}</Text>
+          <TouchableOpacity
+            onPress={handleToggleSave}
+            disabled={isSaving}
+          >
+            <Ionicons
+              name={isSaving ? "hourglass" : isSaved ? "bookmark" : "bookmark-outline"}
+              size={38}
+              color={"#f4b400"}
+            />
+          </TouchableOpacity>
+        </View>
+
         <Text style={styles.date}>
           Published {formatPublishDate(book.updatedAt)}
         </Text>
@@ -200,11 +273,16 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 6,
   },
+  titleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 8,
+  },
   title: {
     fontSize: 26,
     fontWeight: "bold",
     color: COLORS.textPrimary,
-    marginBottom: 8,
   },
   date: {
     fontSize: 14,
