@@ -120,7 +120,7 @@ export default function ProfilePage() {
           <TouchableOpacity 
             style={styles.editBookButton} 
           >
-            <Ionicons name="create-outline" size={20} color={COLORS.primary} />
+            <Ionicons name="create-outline" size={24} color={COLORS.primary} />
           </TouchableOpacity>
         </Link>
 
@@ -131,7 +131,7 @@ export default function ProfilePage() {
           {deleteBookId === item._id ? (
             <ActivityIndicator size="small" color={COLORS.primary} />
           ) : (
-            <Ionicons name="trash-outline" size={20} color={"#e80000ff"} />
+            <Ionicons name="trash-outline" size={24} color={"#e80000ff"} />
           )}
         </TouchableOpacity>
       </View>
