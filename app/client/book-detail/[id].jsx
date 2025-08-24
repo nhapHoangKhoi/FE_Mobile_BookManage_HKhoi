@@ -65,7 +65,7 @@ export default function BookDetailPage() {
           throw new Error(data.message || "Failed to fetch favorite books!");
         }
 
-        const isBookSaved = data.favoriteBooks.some((fav) => fav.bookId === id);
+        const isBookSaved = data.favoriteBook ? true : false;
         setIsSaved(isBookSaved);
       } 
       catch (error) {
