@@ -19,6 +19,7 @@ export default function BookDetailPage() {
   const [pdfError, setPdfError] = useState(null);
   const [isSaved, setIsSaved] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [userRating, setUserRating] = useState(null);
   const { userClient, tokenClient, checkAuthClient } = useAuthStore();
   const router = useRouter();
 
@@ -133,6 +134,52 @@ export default function BookDetailPage() {
     }
   };
 
+  const handleRateBook = (rating) => {
+    if(!userClient || !tokenClient) {
+      Alert.alert("Login required", "You need to login to rate this book!");
+      return;
+    }
+    setUserRating(rating); // set rating for visual UI
+    Alert.alert(
+      "Rate this book",
+      "This action cannot be undone. Are you sure you want to submit this rating?",
+      [
+        { 
+          text: "Cancel", 
+          style: "cancel",
+          onPress: async() => {
+            setUserRating(null);
+          }
+        },
+        {
+          text: "Confirm",
+          onPress: async () => {
+            try {
+              const response = await fetch(`${API_URL}/client/ratings`, {
+                method: "POST",
+                headers: {
+                  Authorization: `Bearer ${tokenClient}`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ ratingValue: rating, bookId: id }),
+              });
+              const data = await response.json();
+
+              if(!response.ok) {
+                throw new Error(data.message || "Failed to submit rating!");
+              }
+
+              Alert.alert("Submitted", "Thanks for your feedback!");
+            } 
+            catch(error) {
+              Alert.alert("Error", error.message || "Failed to submit rating!");
+            }
+          },
+        },
+      ]
+    );
+  };
+
   if (loading) {
     return (
       <View style={styles.centerContainer}>
@@ -177,15 +224,33 @@ export default function BookDetailPage() {
         </Text>
         <Text style={styles.caption}>{book.caption}</Text>
         <View style={styles.rating}>
-          {Array.from({ length: 5 }).map((_, i) => (
-            <Ionicons
-              key={i}
-              name={i < book.rating ? "star" : "star-outline"}
-              size={22}
-              color={i < book.rating ? "#f4b400" : COLORS.textSecondary}
-            />
-          ))}
+          {Array.from({ length: 5 }).map((_, i) => {
+            const rating = userRating || book.avgRating;
+            const filled = Math.min(Math.max(rating - i, 0), 1); // between 0–1
+
+            return (
+              <TouchableOpacity key={i} onPress={() => handleRateBook(i + 1)}>
+                <View>
+                  {/* outline star */}
+                  <Ionicons name="star-outline" size={22} color="#f4b400" />
+                  {/* filled star clipped */}
+                  <View style={{ 
+                    position: "absolute", 
+                    overflow: "hidden", 
+                    width: 22 * filled, 
+                    height: 22 
+                  }}>
+                    <Ionicons name="star" size={22} color="#f4b400" />
+                  </View>
+                </View>
+              </TouchableOpacity>
+            );
+          })}
+          <Text style={styles.numRatings}>{` (${book.ratingCount})`}</Text>
         </View>
+        <Text style={styles.starDetail}>
+          {`${book.avgRating.toFixed(1)} out of 5`}
+        </Text>
       </View>
 
       {book.fileBook && (
@@ -338,6 +403,15 @@ const styles = StyleSheet.create({
   rating: {
     flexDirection: "row",
     alignItems: "center",
+  },
+  numRatings: {
+    fontSize: 14,
+    color: COLORS.textSecondary,
+  },
+  starDetail: {
+    fontSize: 14,
+    color: COLORS.textSecondary,
+    marginTop: 5
   },
   pdfContainer: {
     marginTop: 8,
