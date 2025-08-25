@@ -70,7 +70,7 @@ export default function EditBookPage() {
     if(bookDetail) {
       setTitle(bookDetail.title || "");
       setCaption(bookDetail.caption || "");
-      setRating(bookDetail.rating || 3);
+      setRating(bookDetail.avgRating || 3);
       setImage(bookDetail.image || null);
       
       if(bookDetail.fileBook) {
@@ -84,26 +84,56 @@ export default function EditBookPage() {
     }
   }, [bookDetail]);
 
-  const renderRatingPicker = () => {
-    const stars = [];
-    for(let i = 1; i <= 5; i++) {
-      stars.push(
-        <TouchableOpacity 
-          key={i} 
-          onPress={() => setRating(i)} 
-          style={styles.starButton}
-        >
-          <Ionicons
-            name={i <= rating ? "star" : "star-outline"}
-            size={32}
-            color={i <= rating ? "#f4b400" : COLORS.textSecondary}
-          />
-        </TouchableOpacity>
-      );
-    }
+  // const renderRatingPicker = () => {
+  //   const stars = [];
+  //   for(let i = 1; i <= 5; i++) {
+  //     stars.push(
+  //       <TouchableOpacity 
+  //         key={i} 
+  //         onPress={() => setRating(i)} 
+  //         style={styles.starButton}
+  //       >
+  //         <Ionicons
+  //           name={i <= rating ? "star" : "star-outline"}
+  //           size={32}
+  //           color={i <= rating ? "#f4b400" : COLORS.textSecondary}
+  //         />
+  //       </TouchableOpacity>
+  //     );
+  //   }
+  //   return (
+  //     <View style={styles.ratingContainer}>
+  //       {stars}
+  //     </View>
+  //   );
+  // };
+
+  const renderRatingPicker = (rating) => {
     return (
-      <View style={styles.ratingContainer}>
-        {stars}
+      <View style={[styles.ratingContainer, { opacity: 0.4, backgroundColor: "#505050" }]}>
+        {Array.from({ length: 5 }).map((_, i) => {
+          const filled = Math.min(Math.max(rating - i, 0), 1); // 0–1
+
+          return (
+            <View key={i} style={{ padding: 8 }}>
+              <View  style={{ position: "relative"}}>
+                {/* outline star */}
+                <Ionicons name="star-outline" size={32} color="#f4b400" />
+                {/* filled star clipped */}
+                <View
+                  style={{
+                    position: "absolute",
+                    overflow: "hidden",
+                    width: 32 * filled,
+                    height: 32,
+                  }}
+                >
+                  <Ionicons name="star" size={32} color="#f4b400" />
+                </View>
+              </View>
+            </View>
+          );
+        })}
       </View>
     );
   };
@@ -289,7 +319,11 @@ export default function EditBookPage() {
 
             <View style={styles.formGroup}>
               <Text style={styles.label}>Your Rating</Text>
-              {renderRatingPicker()}
+              {bookDetail && (
+                <>
+                  {renderRatingPicker(bookDetail.avgRating)}
+                </>
+              )}
             </View>
 
             {/* image */}
@@ -311,10 +345,10 @@ export default function EditBookPage() {
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={styles.label}>Caption</Text>
+              <Text style={styles.label}>Description</Text>
               <TextInput
                 style={styles.textArea}
-                placeholder="Write your thoughts..."
+                placeholder="Short descriptions..."
                 placeholderTextColor={COLORS.placeholderText}
                 value={caption}
                 onChangeText={setCaption}
