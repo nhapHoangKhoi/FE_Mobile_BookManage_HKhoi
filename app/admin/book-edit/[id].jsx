@@ -320,7 +320,7 @@ export default function EditBookPage() {
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={styles.label}>Your Rating</Text>
+              <Text style={styles.label}>Ratings</Text>
               {bookDetail && (
                 <>
                   {renderRatingPicker(bookDetail.avgRating)}

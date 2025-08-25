@@ -6,12 +6,13 @@ import { formatMemberSince } from "../lib/utils";
 import { Ionicons } from "@expo/vector-icons";
 import COLORS from "../constants/colors";
 import LogoutButton from "./LogoutButton";
+import { Link } from "expo-router";
 
 export default function ProfileHeader() {
   const { user } = useAuthStore();
 
   if(!user) return null;
-
+  
   return (
     <View style={styles.profileHeader}>
       <Image 
@@ -28,14 +29,13 @@ export default function ProfileHeader() {
       </View>
 
       <View style={styles.groupButtonsProfile}>
-        <TouchableOpacity 
-          style={styles.editProfileButton} 
-          // onPress={...}
-        >
-          <Ionicons name="create-outline" size={18} color={COLORS.white} />
-          <Text style={styles.logoutText}>Edit</Text>
-        </TouchableOpacity>
-
+        <Link href={`/admin/profile-edit/${user.id}`} asChild>
+          <TouchableOpacity style={styles.editProfileButton}>
+            <Ionicons name="create-outline" size={18} color={COLORS.white} />
+            <Text style={styles.logoutText}>Edit</Text>
+          </TouchableOpacity>
+        
+        </Link>
         <LogoutButton />
       </View>
     </View>
