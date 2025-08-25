@@ -8,6 +8,7 @@ import COLORS from "../../../constants/colors";
 import { API_URL } from "../../../constants/api";
 import { formatPublishDate } from "../../../lib/utils";
 import { useAuthStore } from "../../../store/authStore";
+import GoBackButton from "../../../components/GoBackButton";
 
 export default function BookDetailPage() {
   const segments = useSegments();
@@ -198,6 +199,7 @@ export default function BookDetailPage() {
 
   return (
     <ScrollView style={styles.container}>
+      <GoBackButton />
       <View style={styles.card}>
         <Image source={book.image} style={styles.image} contentFit="cover" />
 

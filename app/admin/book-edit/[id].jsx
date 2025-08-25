@@ -23,6 +23,7 @@ import * as DocumentPicker from "expo-document-picker";
 import { API_URL } from "../../../constants/api";
 import { useLocalSearchParams, } from "expo-router";
 import { sleep } from "../../../lib/utils";
+import GoBackButton from "../../../components/GoBackButton";
 
 export default function EditBookPage() {
   const { id } = useLocalSearchParams();
@@ -292,6 +293,7 @@ export default function EditBookPage() {
         //-- End reload page by pulling the list down
       >
         <View style={styles.card}>
+          <GoBackButton />
           <View style={styles.header}>
             <Text style={styles.title}>Edit Book</Text>
             <Text style={styles.subtitle}>Update your books</Text>
