@@ -26,7 +26,7 @@ import { sleep } from "../../../../lib/utils";
 export default function CreateBookPage() {
   const segments = useSegments();
   const [title, setTitle] = useState("");
-  const [caption, setCaption] = useState("");
+  const [description, setDescription] = useState("");
   const [rating, setRating] = useState(3);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -113,7 +113,7 @@ export default function CreateBookPage() {
   };
 
   const handleSubmit = async () => {
-    if(!title || !caption || !image || !rating || !file) {
+    if(!title || !description || !image || !rating || !file) {
       Alert.alert("Error", "Please fill in all fields");
       return;
     }
@@ -128,7 +128,7 @@ export default function CreateBookPage() {
       // FormData
       const formData = new FormData();
       formData.append("title", title);
-      formData.append("caption", caption);
+      formData.append("description", description);
       formData.append("rating", rating.toString());
 
       formData.append("image", {
@@ -158,7 +158,7 @@ export default function CreateBookPage() {
 
       Alert.alert("Success", "Your book has been posted!");
       setTitle("");
-      setCaption("");
+      setDescription("");
       setRating(3);
       setImage(null);
       setFile(null);
@@ -177,7 +177,7 @@ export default function CreateBookPage() {
     setRefreshing(true);
     await sleep(500); // delay first then fetchData
     setTitle("");
-    setCaption("");
+    setDescription("");
     setRating(3);
     // force clear image/file properly instead of using setImage(null)
     setImage(undefined);
@@ -258,13 +258,13 @@ export default function CreateBookPage() {
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={styles.label}>Caption</Text>
+              <Text style={styles.label}>Description</Text>
               <TextInput
                 style={styles.textArea}
-                placeholder="Write your thoughts..."
+                placeholder="Short descriptions..."
                 placeholderTextColor={COLORS.placeholderText}
-                value={caption}
-                onChangeText={setCaption}
+                value={description}
+                onChangeText={setDescription}
                 multiline
               />
             </View>

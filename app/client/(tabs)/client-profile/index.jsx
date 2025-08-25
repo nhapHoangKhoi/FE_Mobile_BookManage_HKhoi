@@ -78,7 +78,7 @@ export default function ProfilePage() {
             {renderRatingStars(item.bookId.avgRating)}
           </View>
           <Text style={styles.bookCaption} numberOfLines={2}>
-            {item.bookId.caption}
+            {item.bookId.description}
           </Text>
           <Text style={styles.bookDate}>
             {new Date(item.bookId.createdAt).toLocaleDateString()}

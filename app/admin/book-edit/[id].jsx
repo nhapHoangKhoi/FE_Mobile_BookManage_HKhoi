@@ -30,7 +30,7 @@ export default function EditBookPage() {
   const segments = useSegments();
   const [bookDetail, setBookDetail] = useState();
   const [title, setTitle] = useState("");
-  const [caption, setCaption] = useState("");
+  const [description, setDescription] = useState("");
   const [rating, setRating] = useState(3);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -70,7 +70,7 @@ export default function EditBookPage() {
   useEffect(() => {
     if(bookDetail) {
       setTitle(bookDetail.title || "");
-      setCaption(bookDetail.caption || "");
+      setDescription(bookDetail.description || "");
       setRating(bookDetail.avgRating || 3);
       setImage(bookDetail.image || null);
       
@@ -191,7 +191,7 @@ export default function EditBookPage() {
   };
 
   const handleSubmit = async () => {
-    if(!title || !caption || !image || !rating || !file) {
+    if(!title || !description || !image || !rating || !file) {
       Alert.alert("Error", "Please fill in all fields");
       return;
     }
@@ -202,7 +202,7 @@ export default function EditBookPage() {
       // FormData
       const formData = new FormData();
       formData.append("title", title);
-      formData.append("caption", caption);
+      formData.append("description", description);
       formData.append("rating", rating.toString());
 
       if(image && !image.startsWith("https://res.cloudinary.com/")) {
@@ -243,7 +243,7 @@ export default function EditBookPage() {
           onPress: async () => {
             // clear temporarily to show reload feeling
             setTitle("");
-            setCaption("");
+            setDescription("");
             setImage(null);
             setRating(null);
             setFile(null);
@@ -352,8 +352,8 @@ export default function EditBookPage() {
                 style={styles.textArea}
                 placeholder="Short descriptions..."
                 placeholderTextColor={COLORS.placeholderText}
-                value={caption}
-                onChangeText={setCaption}
+                value={description}
+                onChangeText={setDescription}
                 multiline
               />
             </View>

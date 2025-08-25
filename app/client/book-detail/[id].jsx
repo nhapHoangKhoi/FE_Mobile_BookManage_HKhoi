@@ -224,7 +224,7 @@ export default function BookDetailPage() {
         <Text style={styles.date}>
           Published {formatPublishDate(book.updatedAt)}
         </Text>
-        <Text style={styles.caption}>{book.caption}</Text>
+        <Text style={styles.caption}>{book.description}</Text>
         <View style={styles.rating}>
           {Array.from({ length: 5 }).map((_, i) => {
             const rating = userRating || book.avgRating;
