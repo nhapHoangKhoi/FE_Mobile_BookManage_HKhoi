@@ -75,7 +75,7 @@ export default function ProfilePage() {
         <View style={styles.bookInfo}>
           <Text style={styles.bookTitle}>{item.bookId.title}</Text>
           <View style={styles.ratingContainer}>
-            {renderRatingStars(item.bookId.rating)}
+            {renderRatingStars(item.bookId.avgRating)}
           </View>
           <Text style={styles.bookCaption} numberOfLines={2}>
             {item.bookId.caption}
@@ -97,20 +97,48 @@ export default function ProfilePage() {
     );
   }
 
+  // const renderRatingStars = (rating) => {
+  //   const stars = [];
+  //   for(let i = 1; i <= 5; i++) {
+  //     stars.push(
+  //       <Ionicons
+  //         key={i}
+  //         name={i <= rating ? "star" : "star-outline"}
+  //         size={14}
+  //         color={i <= rating ? "#f4b400" : COLORS.textSecondary}
+  //         style={{ marginRight: 2 }}
+  //       />
+  //     );
+  //   }
+  //   return stars;
+  // };
+
   const renderRatingStars = (rating) => {
-    const stars = [];
-    for(let i = 1; i <= 5; i++) {
-      stars.push(
-        <Ionicons
-          key={i}
-          name={i <= rating ? "star" : "star-outline"}
-          size={14}
-          color={i <= rating ? "#f4b400" : COLORS.textSecondary}
-          style={{ marginRight: 2 }}
-        />
-      );
-    }
-    return stars;
+    return (
+      <View style={{ flexDirection: "row" }}>
+        {Array.from({ length: 5 }).map((_, i) => {
+          const filled = Math.min(Math.max(rating - i, 0), 1); // between 0–1
+
+          return (
+            <View key={i} style={{ position: "relative", marginRight: 2 }}>
+              {/* outline star */}
+              <Ionicons name="star-outline" size={14} color="#f4b400" />
+              {/* filled star clipped */}
+              <View
+                style={{
+                  position: "absolute",
+                  overflow: "hidden",
+                  width: 14 * filled,
+                  height: 14,
+                }}
+              >
+                <Ionicons name="star" size={14} color="#f4b400" />
+              </View>
+            </View>
+          );
+        })}
+      </View>
+    );
   };
 
   const handleRefresh = async () => {
