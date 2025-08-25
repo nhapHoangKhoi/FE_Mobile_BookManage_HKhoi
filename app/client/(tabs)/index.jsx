@@ -6,7 +6,6 @@ import {
   RefreshControl,
   TouchableOpacity,
 } from "react-native";
-import { useAuthStore } from "../../../store/authStore";
 
 import { Image } from "expo-image";
 import { useEffect, useState } from "react";
@@ -96,19 +95,31 @@ export default function Home() {
   // --- End fetchMoreBook with infinite scrolling technique
 
   const renderRatingStars = (rating) => {
-    const stars = [];
-    for(let i = 1; i <= 5; i++) {
-      stars.push(
-        <Ionicons
-          key={i}
-          name={i <= rating ? "star" : "star-outline"}
-          size={16}
-          color={i <= rating ? "#f4b400" : COLORS.textSecondary}
-          style={{ marginRight: 2 }}
-        />
-      );
-    }
-    return stars;
+    return (
+      <View style={{ flexDirection: "row" }}>
+        {Array.from({ length: 5 }).map((_, i) => {
+          const filled = Math.min(Math.max(rating - i, 0), 1); // between 0–1
+
+          return (
+            <View key={i} style={{ position: "relative", marginRight: 2 }}>
+              {/* outline star */}
+              <Ionicons name="star-outline" size={22} color="#f4b400" />
+              {/* filled star clipped */}
+              <View
+                style={{
+                  position: "absolute",
+                  overflow: "hidden",
+                  width: 22 * filled,
+                  height: 22,
+                }}
+              >
+                <Ionicons name="star" size={22} color="#f4b400" />
+              </View>
+            </View>
+          );
+        })}
+      </View>
+    );
   };
 
   // destructure syntax { item }
@@ -127,7 +138,7 @@ export default function Home() {
           <View style={styles.bookDetails}>
             <Text style={styles.bookTitle}>{item.title}</Text>
             <View style={styles.ratingContainer}>
-              {renderRatingStars(item.rating)}
+              {renderRatingStars(item.avgRating)}
             </View>
             <Text style={styles.caption}>{item.caption}</Text>
             <Text style={styles.date}>
