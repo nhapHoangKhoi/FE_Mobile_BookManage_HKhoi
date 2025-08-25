@@ -140,7 +140,9 @@ export default function Home() {
             <View style={styles.ratingContainer}>
               {renderRatingStars(item.avgRating)}
             </View>
-            <Text style={styles.caption}>{item.caption}</Text>
+            <Text style={styles.caption} numberOfLines={2}>
+              {item.caption}
+            </Text>
             <Text style={styles.date}>
               Published on {formatPublishDate(item.createdAt)}
             </Text>
