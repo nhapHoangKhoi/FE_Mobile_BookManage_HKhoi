@@ -5,12 +5,14 @@ import {
   ActivityIndicator,
   RefreshControl,
   TouchableOpacity,
+  TextInput,
 } from "react-native";
 
 import { Image } from "expo-image";
 import { useEffect, useState } from "react";
 
 import styles from "../../../assets/styles/home.styles";
+import searchStyles from "../../../assets/styles/search.styles"
 import { API_URL } from "../../../constants/api";
 import { Ionicons } from "@expo/vector-icons";
 import { formatPublishDate } from "../../../lib/utils";
@@ -18,6 +20,7 @@ import COLORS from "../../../constants/colors";
 import LoaderSpinner from "../../../components/LoaderSpinner";
 import { sleep } from "../../../lib/utils";
 import { Link } from "expo-router";
+import { useDebounce } from "../../../hooks/useDebounce";
 
 export default function Home() {
   const [books, setBooks] = useState([]);
@@ -25,18 +28,29 @@ export default function Home() {
   const [refreshing, setRefreshing] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchLoading, setSearchLoading] = useState(false);
+
+  // const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
   // call to api (integrate with infinite scrolling technique below)
-  const fetchBooks = async (pageNum = 1, refresh = false) => {
+  const fetchBooks = async (pageNum = 1, refresh = false, query = "") => {
     try {
       if(refresh) {
         setRefreshing(true);
       } 
-      else if(pageNum === 1) {
-        setLoading(true);
+      else if (pageNum === 1 && !query && books.length === 0) {
+        setLoading(true); // only show big loader on very first load
       } 
+      else if (pageNum === 1) {
+        setSearchLoading(true); // small loader when searching
+      }
 
-      const response = await fetch(`${API_URL}/client/books?page=${pageNum}&limit=2`);
+      const url = query
+        ? `${API_URL}/client/search?inputKeyword=${encodeURIComponent(query)}&page=${pageNum}&limit=2`
+        : `${API_URL}/client/books?page=${pageNum}&limit=2`;
+
+      const response = await fetch(url);
       const data = await response.json();
 
       if(!response.ok) { 
@@ -70,6 +84,7 @@ export default function Home() {
     } 
     catch (error) {
       console.log("Error fetching books", error);
+      setBooks([]);
     } 
     finally { // always
       if(refresh) {
@@ -78,7 +93,8 @@ export default function Home() {
       } 
       else {
         setLoading(false);
-      } 
+        setSearchLoading(false);
+      }
     }
   };
 
@@ -88,11 +104,23 @@ export default function Home() {
 
   // --- fetchMoreBook with infinite scrolling technique
   const handleLoadMore = async () => {
-    if(hasMore && !loading && !refreshing) {
-      await fetchBooks(page + 1); // call to the api again
+    if(hasMore && !loading && !refreshing && !searchLoading) {
+      await fetchBooks(page + 1, false, searchQuery); // call to the api again
     }
   };
   // --- End fetchMoreBook with infinite scrolling technique
+
+  const handleSearch = async (query) => {
+    setPage(1);
+    await fetchBooks(1, false, query);
+  }
+
+  useEffect(() => {
+    handleSearch(searchQuery);
+  }, [searchQuery]);
+  // useEffect(() => {
+  //   handleSearch(debouncedSearchQuery);
+  // }, [debouncedSearchQuery]);
 
   const renderRatingStars = (rating) => {
     return (
@@ -152,53 +180,90 @@ export default function Home() {
     </Link>
   );
 
-  if(loading) return <LoaderSpinner size="large" color="#ff0000" />;
+  if(loading && searchQuery != "") {
+    return <LoaderSpinner size="large" color="#ff0000" />;
+  }
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={books}
-        renderItem={renderItem}
-        keyExtractor={(item) => item._id}
-        contentContainerStyle={styles.listContainer}
-        showsVerticalScrollIndicator={false} // not show scrollbar
-        //-- reload page by pulling the list down
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={() => fetchBooks(1, true)}
-            colors={[COLORS.primary]}
-            tintColor={COLORS.primary}
+      <View style={searchStyles.searchSection}>
+        <View style={searchStyles.searchContainer}>
+          <Ionicons
+            name="search"
+            size={20}
+            color={COLORS.textLight}
+            style={searchStyles.searchIcon}
           />
-        }
-        //-- End reload page by pulling the list down
+          <TextInput
+            style={searchStyles.searchInput}
+            placeholder="Search books..."
+            placeholderTextColor={COLORS.placeholderText}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            returnKeyType="search"
+          />
+          {searchQuery !== "" && (
+            <TouchableOpacity 
+              onPress={() => {
+                setSearchQuery("");
+                // setPage(1);
+              }}
+            >
+              <Ionicons name="close-circle" size={20} color={COLORS.textLight} />
+            </TouchableOpacity>
+          )}
+        </View>
+      </View>
 
-        onEndReached={handleLoadMore}
-        onEndReachedThreshold={0.1} // how far from the end to trigger (here is to call the api) 
-                                    // used to enhance UX
-        ListHeaderComponent={
-          <View style={styles.header}>
-            <Text style={styles.headerTitle}>BookStore</Text>
-            <Text style={styles.headerSubtitle}>Find your suitable books</Text>
-          </View>
-        }
-        //-- draw spinner at the end
-        ListFooterComponent={
-          hasMore && books.length > 0 
-            ? (
-              <ActivityIndicator style={styles.footerLoader} size="small" color={COLORS.primary} />
-            ) 
-            : null
-        }
-        //-- End draw spinner at the end
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Ionicons name="book-outline" size={60} color={COLORS.textSecondary} />
-            <Text style={styles.emptyText}>No documents yet</Text>
-            <Text style={styles.emptySubtext}>Be the first to share a book!</Text>
-          </View>
-        }
-      />
+      {loading ? (
+        <View style={searchStyles.loadingContainer}>
+          <LoaderSpinner size="small" color={COLORS.primary} />
+        </View>
+      ) : (
+        <FlatList
+          data={books}
+          renderItem={renderItem}
+          keyExtractor={(item) => item._id}
+          contentContainerStyle={styles.listContainer}
+          showsVerticalScrollIndicator={false} // not show scrollbar
+          //-- reload page by pulling the list down
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={() => fetchBooks(1, true, searchQuery)}
+              colors={[COLORS.primary]}
+              tintColor={COLORS.primary}
+            />
+          }
+          //-- End reload page by pulling the list down
+  
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.1} // how far from the end to trigger (here is to call the api) 
+                                      // used to enhance UX
+          ListHeaderComponent={
+            <View style={styles.header}>
+              <Text style={styles.headerTitle}>BookStore</Text>
+              <Text style={styles.headerSubtitle}>Find your suitable books</Text>
+            </View>
+          }
+          //-- draw spinner at the end
+          ListFooterComponent={
+            (hasMore || searchLoading) && books.length > 0 
+              ? (
+                <ActivityIndicator style={styles.footerLoader} size="small" color={COLORS.primary} />
+              ) 
+              : null
+          }
+          //-- End draw spinner at the end
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Ionicons name="book-outline" size={60} color={COLORS.textSecondary} />
+              <Text style={styles.emptyText}>No books found</Text>
+              <Text style={styles.emptySubtext}>Be the first to share a book!</Text>
+            </View>
+          }
+        />
+      )}
     </View>
   );
 }
