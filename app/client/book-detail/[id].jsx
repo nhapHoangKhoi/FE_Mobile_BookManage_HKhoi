@@ -232,13 +232,14 @@ export default function BookDetailPage() {
               <TouchableOpacity key={i} onPress={() => handleRateBook(i + 1)}>
                 <View>
                   {/* outline star */}
-                  <Ionicons name="star-outline" size={22} color="#f4b400" />
+                  <Ionicons name="star-outline" size={22} color="#f4b400" style={{ marginRight: 2 }} />
                   {/* filled star clipped */}
                   <View style={{ 
                     position: "absolute", 
                     overflow: "hidden", 
                     width: 22 * filled, 
-                    height: 22 
+                    height: 22,
+                    marginRight: 2 
                   }}>
                     <Ionicons name="star" size={22} color="#f4b400" />
                   </View>
